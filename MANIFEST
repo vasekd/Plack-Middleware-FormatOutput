@@ -1,9 +1,14 @@
 Changes
 lib/Plack/Middleware/FormatOutput.pm
+LICENSE
 Makefile.PL
 MANIFEST			This list of files
 README
+README.pod
 t/00-load.t
+t/01-parse.t
+t/02-err.t
+t/boilerplate.t
 t/manifest.t
 t/pod-coverage.t
 t/pod.t

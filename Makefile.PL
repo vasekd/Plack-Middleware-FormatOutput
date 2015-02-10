@@ -16,10 +16,15 @@ WriteMakefile(
     },
     BUILD_REQUIRES => {
         'Test::More' => 0,
+        'Plack::Builder' => 0,
+        'Plack::Test' => 0,
+        'HTTP::Request::Common' => 0,
+        'Plack::App::URLMap' => 0,
     },
     PREREQ_PM => {
         'JSON::XS' => 0,
-        'YAML::Syck' => 0
+        'YAML::Syck' => 0,
+        'Plack::Middleware' => 0,
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES => 'Plack-Middleware-FormatOutput-*' },

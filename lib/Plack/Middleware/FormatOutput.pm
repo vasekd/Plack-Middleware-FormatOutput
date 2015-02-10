@@ -35,15 +35,25 @@ our $VERSION = '0.01';
 
 =head1 DESCRIPTION
 
-The Middleware formats output perl struct by "Accept" header param.
+The Middleware formats output perl struct by "Accept" header param or by format param in URL.
+
+You can get json when define:
+
+=over 4
+
+=item * Accept header application/json
+
+or
+
+=item * Add ?format=application/json to URL
+
+=back
 
 For complete RestAPI in Perl use: 
 
 =over 4
 
 =item * Plack::Middleware::RestAPI
-
-=item * Plack::Middleware::SetAccept
 
 =item * Plack::Middleware::ParseContent
 
@@ -151,8 +161,7 @@ sub prepare_app {
 sub call {
 	my($self, $env) = @_;
 
-	# Get accept
-	my $accept = $env->{HTTP_ACCEPT};
+	my $accept = _getAccept($env);
 
 	# Run app
 	my $ret = $self->app->($env);
@@ -163,17 +172,35 @@ sub call {
 	}
 
 	### Transform returned perl struct by accept
-	my $res;
-	if (exists $MIME_TYPES->{$accept}){
+	my $res = $MIME_TYPES->{$accept}->($ret);
+	
+	return ['200', ['Content-Type' => $accept, 'Content-Length' => length($res) ], [ $res ]];
+}
 
-		# modify response - add forms
-		$res = $MIME_TYPES->{$accept}->($ret);
+sub _getAccept {
+	my ($env) = @_;
 
-	}else{
-		HTTP::Exception::406->throw();
+	# Get accept from url
+	my $accept;
+	# We parse this with reqular because we need this as quick as possible
+	if ($env->{QUERY_STRING} =~/format=([\w\/\+]*)/){
+		if (exists $MIME_TYPES->{$1}){
+			$accept = $1;
+		}
+	};
+
+	# Set accept by http header
+	if (!$accept && $env->{HTTP_ACCEPT}){
+		foreach (split(/,/, $env->{HTTP_ACCEPT})){
+			next unless exists $MIME_TYPES->{$_};
+			$accept = $_;
+			last;
+		}
 	}
 
-	return ['200', ['Content-Type' => $accept, 'Content-Length' => length($res) ], [ $res ]];
+	HTTP::Exception::406->throw() unless defined $accept;
+
+	return $accept;
 }
 
 =head1 TUTORIAL

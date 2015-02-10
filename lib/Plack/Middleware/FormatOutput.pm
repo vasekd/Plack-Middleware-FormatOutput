@@ -17,11 +17,11 @@ Plack::Middleware::FormatOutput - Format output struct by Accept header.
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 =head1 SYNOPSIS
@@ -173,7 +173,7 @@ sub call {
 
 	### Transform returned perl struct by accept
 	my $res = $MIME_TYPES->{$accept}->($ret);
-	
+
 	return ['200', ['Content-Type' => $accept, 'Content-Length' => length($res) ], [ $res ]];
 }
 

@@ -71,13 +71,13 @@ For complete RestAPI in Perl use:
 
 =item * text/plain
 
-=item * text/html - it uses HTML::Vis as default formater if installed
+=item * text/html - it uses Rest::HtmlVis as default formater if installed
 
 =back
 
 =cut
 
-### Set HTML::Vis
+### Set Rest::HtmlVis
 my $htmlvis = undef;
 
 ### Try load library
@@ -99,7 +99,7 @@ my $MIME_TYPES = {
 	},
 	'text/html'   => sub {
 		if ($htmlvis){
-			return $htmlvis->html($_[0]);
+			return $htmlvis->html($_[0], $_[1]); #struct, env
 		}else{
 			return @_;
 		}
@@ -124,9 +124,9 @@ For example:
 		mount "/api" => sub { return {'link' => 'content'} };
 	};
 
-=head2 htmlvis (if HTML::Vis is installed)
+=head2 htmlvis (if Rest::HtmlVis is installed)
 
-Define parameters for HTML::Vis. 
+Define parameters for Rest::HtmlVis. 
 
 For example:
 
@@ -136,7 +136,7 @@ For example:
 		enable 'FormatOutput', htmlvis => {
 			links => 'My::Links'
 		};
-		mount "/api" => sub { return {'link' => 'content'} };
+		mount "/api" => sub { return {'links' => 'content'} };
 	};
 
 =cut
@@ -151,9 +151,9 @@ sub prepare_app {
 	}
 
 	### Add htmlvis
-	if (_try_load('HTML::Vis')){
+	if (_try_load('Rest::HtmlVis')){
 		my $params = $self->{htmlvis} if exists $self->{htmlvis};
-		$htmlvis = HTML::Vis->new($params);
+		$htmlvis = Rest::HtmlVis->new($params);
 	}
 
 }
@@ -172,7 +172,7 @@ sub call {
 	}
 
 	### Transform returned perl struct by accept
-	my $res = $MIME_TYPES->{$accept}->($ret);
+	my $res = $MIME_TYPES->{$accept}->($ret, $env);
 
 	return ['200', ['Content-Type' => $accept, 'Content-Length' => length($res) ], [ $res ]];
 }

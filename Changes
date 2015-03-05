@@ -1,5 +1,8 @@
 Revision history for Plack-Middleware-FormatOutput
 
+0.03    5. Mar 2015
+        Add accept for */*
+
 0.02    10. Feb 2015
         Fixed accept header
 

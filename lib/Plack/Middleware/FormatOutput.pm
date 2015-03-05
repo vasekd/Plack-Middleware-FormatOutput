@@ -192,6 +192,10 @@ sub _getAccept {
 	# Set accept by http header
 	if (!$accept && $env->{HTTP_ACCEPT}){
 		foreach (split(/,/, $env->{HTTP_ACCEPT})){
+			if ($_ eq '*/*'){
+				$accept = exists $MIME_TYPES->{'text/html'} ? 'text/html' : undef;
+				last;
+			}
 			next unless exists $MIME_TYPES->{$_};
 			$accept = $_;
 			last;

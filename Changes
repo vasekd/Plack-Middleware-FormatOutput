@@ -1,5 +1,8 @@
 Revision history for Plack-Middleware-FormatOutput
 
+{{$NEXT}}
+	Switch to Milla
+
 0.03    5. Mar 2015
         Add accept for */*
 

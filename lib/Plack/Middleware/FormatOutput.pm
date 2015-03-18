@@ -11,71 +11,7 @@ use HTTP::Exception '4XX';
 use JSON::XS;
 use YAML::Syck;
 
-=head1 NAME
-
-Plack::Middleware::FormatOutput - Format output struct by Accept header.
-
-=head1 VERSION
-
-Version 0.02
-
-=cut
-
 our $VERSION = '0.03';
-
-
-=head1 SYNOPSIS
-
-	use Plack::Middleware::FormatOutput;
-
-	builder {
-		enable 'FormatOutput';
-		mount "/api" => sub { return {'link' => 'content'} };
-	};
-
-=head1 DESCRIPTION
-
-The Middleware formats output perl struct by "Accept" header param or by format param in URL.
-
-You can get json when define:
-
-=over 4
-
-=item * Accept header application/json
-
-or
-
-=item * Add ?format=application/json to URL
-
-=back
-
-For complete RestAPI in Perl use: 
-
-=over 4
-
-=item * Plack::Middleware::RestAPI
-
-=item * Plack::Middleware::ParseContent
-
-=back
-
-=head1 CONSTANTS
-
-=head2 DEFAULT MIME TYPES
-
-=over 4
-
-=item * application/json
-
-=item * text/yaml
-
-=item * text/plain
-
-=item * text/html - it uses Rest::HtmlVis as default formater if installed
-
-=back
-
-=cut
 
 ### Set Rest::HtmlVis
 my $htmlvis = undef;
@@ -105,41 +41,6 @@ my $MIME_TYPES = {
 		}
 	}
 };
-
-=head1 PARAMETERS
-
-=head2 mime_type
-
-Specify if and how returned content should be formated in browser.
-
-For example:
-
-	use Plack::Middleware::FormatOutput;
-	use My::HTML
-
-	builder {
-		enable 'FormatOutput', mime_type => {
-			'text/html' => sub{ My::HTML::Parse(@_) }
-		};
-		mount "/api" => sub { return {'link' => 'content'} };
-	};
-
-=head2 htmlvis (if Rest::HtmlVis is installed)
-
-Define parameters for Rest::HtmlVis. 
-
-For example:
-
-	use Plack::Middleware::FormatOutput;
-
-	builder {
-		enable 'FormatOutput', htmlvis => {
-			links => 'My::Links'
-		};
-		mount "/api" => sub { return {'links' => 'content'} };
-	};
-
-=cut
 
 sub prepare_app {
 	my $self = shift;
@@ -207,13 +108,106 @@ sub _getAccept {
 	return $accept;
 }
 
+1;
+__END__
+
+=encoding utf-8
+
+=head1 NAME
+
+Plack::Middleware::FormatOutput - Format output struct by Accept header.
+
+=head1 SYNOPSIS
+
+	use Plack::Middleware::FormatOutput;
+
+	builder {
+		enable 'FormatOutput';
+		mount "/api" => sub { return {'link' => 'content'} };
+	};
+
+=head1 DESCRIPTION
+
+The Middleware formats output perl struct by "Accept" header param or by format param in URL.
+
+You can get json when define:
+
+=over 4
+
+=item * Accept header application/json
+
+or
+
+=item * Add ?format=application/json to URL
+
+=back
+
+For complete RestAPI in Perl use: 
+
+=over 4
+
+=item * Plack::Middleware::RestAPI
+
+=item * Plack::Middleware::ParseContent
+
+=back
+
+=head1 CONSTANTS
+
+=head2 DEFAULT MIME TYPES
+
+=over 4
+
+=item * application/json
+
+=item * text/yaml
+
+=item * text/plain
+
+=item * text/html - it uses Rest::HtmlVis as default formater if installed
+
+=back
+
+=head1 PARAMETERS
+
+=head2 mime_type
+
+Specify if and how returned content should be formated in browser.
+
+For example:
+
+	use Plack::Middleware::FormatOutput;
+	use My::HTML
+
+	builder {
+		enable 'FormatOutput', mime_type => {
+			'text/html' => sub{ My::HTML::Parse(@_) }
+		};
+		mount "/api" => sub { return {'link' => 'content'} };
+	};
+
+=head2 htmlvis (if Rest::HtmlVis is installed)
+
+Define parameters for Rest::HtmlVis. 
+
+For example:
+
+	use Plack::Middleware::FormatOutput;
+
+	builder {
+		enable 'FormatOutput', htmlvis => {
+			links => 'My::Links'
+		};
+		mount "/api" => sub { return {'links' => 'content'} };
+	};
+
 =head1 TUTORIAL
 
 L<http://psgirestapi.dovrtel.cz/>
 
 =head1 AUTHOR
 
-Vaclav Dovrtel, C<< <vaclav.dovrtel at gmail.com> >>
+Václav Dovrtěl E<lt>vaclav.dovrtel@gmail.comE<gt>
 
 =head1 BUGS
 
@@ -227,16 +221,13 @@ Inspired by L<https://github.com/towhans/hochschober>
 
 L<https://github.com/vasekd/Plack-Middleware-FormatOutput>
 
-=head1 LICENSE AND COPYRIGHT
+=head1 COPYRIGHT
 
-Copyright 2015 Vaclav Dovrtel.
+Copyright 2015- Václav Dovrtěl
 
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
+=head1 LICENSE
 
-See L<http://dev.perl.org/licenses/> for more information.
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
 
 =cut
-
-1; # End of Plack::Middleware::FormatOutput

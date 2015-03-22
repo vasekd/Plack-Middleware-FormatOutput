@@ -5,13 +5,14 @@ use strict;
 use warnings FATAL => 'all';
 
 use parent qw( Plack::Middleware );
+use Plack::Util;
 
 use HTTP::Exception '4XX';
 
 use JSON::XS;
 use YAML::Syck;
 
-our $VERSION = '0.03';
+our $VERSION = '0.03'; # is set automagically with Milla
 
 ### Set Rest::HtmlVis
 my $htmlvis = undef;
@@ -35,10 +36,10 @@ my $MIME_TYPES = {
 	},
 	'text/html'   => sub {
 		if ($htmlvis){
-			return $htmlvis->html($_[0], $_[1]); #struct, env
-		}else{
-			return @_;
+			my $ret = $htmlvis->html(@_); #struct, env
+			return $ret if $ret;
 		}
+		return JSON::XS->new->utf8->allow_nonref->encode($_[0]); # Just show content
 	}
 };
 
@@ -62,20 +63,32 @@ sub prepare_app {
 sub call {
 	my($self, $env) = @_;
 
+	### Run app
+	my $res = $self->app->($env);
+
+	### Get accept from request header 
 	my $accept = _getAccept($env);
+	return $res unless $accept;
 
-	# Run app
-	my $ret = $self->app->($env);
+	### Return handler that manage response
+	return Plack::Util::response_cb($res, sub {
+		my $res = shift;
+		if ( !Plack::Util::status_with_no_entity_body( $res->[0] ) && defined $res->[2] ){
 
-	# Return if not content
-	if (!defined $ret){
-		return ['200', ['Content-Type' => $accept], []];
-	}
+			### Set header
+			if ($res->[1] && @{$res->[1]}){
+				Plack::Util::header_set($res->[1], 'Content-Type', $accept);
+			}else{
+				$res->[1] = ['Content-Type', $accept];
+			}
 
-	### Transform returned perl struct by accept
-	my $res = $MIME_TYPES->{$accept}->($ret, $env);
-
-	return ['200', ['Content-Type' => $accept, 'Content-Length' => length($res) ], [ $res ]];
+			### Convert data
+			$res->[2] = [$MIME_TYPES->{$accept}->($res->[2], $env)];
+		}elsif(! defined $res->[2]){
+			$res->[2] = []; # backward compatibility
+		}
+		return
+	});
 }
 
 sub _getAccept {
@@ -123,7 +136,7 @@ Plack::Middleware::FormatOutput - Format output struct by Accept header.
 
 	builder {
 		enable 'FormatOutput';
-		mount "/api" => sub { return {'link' => 'content'} };
+		mount "/api" => sub { return [200, undef, {'link' => 'content'}] };
 	};
 
 =head1 DESCRIPTION
@@ -146,7 +159,7 @@ For complete RestAPI in Perl use:
 
 =over 4
 
-=item * Plack::Middleware::RestAPI
+=item * Plack::App::REST
 
 =item * Plack::Middleware::ParseContent
 
@@ -164,7 +177,7 @@ For complete RestAPI in Perl use:
 
 =item * text/plain
 
-=item * text/html - it uses Rest::HtmlVis as default formater if installed
+=item * text/html - it uses Rest::HtmlVis as default formatter if installed
 
 =back
 
@@ -183,7 +196,7 @@ For example:
 		enable 'FormatOutput', mime_type => {
 			'text/html' => sub{ My::HTML::Parse(@_) }
 		};
-		mount "/api" => sub { return {'link' => 'content'} };
+		mount "/api" => sub { return [200, undef, {'link' => 'content'}] };
 	};
 
 =head2 htmlvis (if Rest::HtmlVis is installed)
@@ -198,7 +211,7 @@ For example:
 		enable 'FormatOutput', htmlvis => {
 			links => 'My::Links'
 		};
-		mount "/api" => sub { return {'links' => 'content'} };
+		mount "/api" => sub { return [200, undef, {'links' => 'content'}] };
 	};
 
 =head1 TUTORIAL

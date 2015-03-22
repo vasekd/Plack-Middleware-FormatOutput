@@ -14,14 +14,10 @@ BEGIN {
 	use_ok( 'Plack::Middleware::FormatOutput' ) || print "Bail out!\n";
 }
 
-my $make_app = sub {
-	sub {
+my $app1 = 	sub {
 		my $env = shift;
-		return { data => 'test' };
+		return [200,[],{ data => 'test' }];
 	};
-};
-
-my $app1 = $make_app->();
 
 my $app = builder {
 		enable 'FormatOutput', mime_type => { xyz => sub{ return 'test' } };

@@ -3,6 +3,7 @@ requires 'JSON::XS';
 requires 'Plack::Middleware';
 requires 'YAML::Syck';
 requires 'perl', '5.006';
+requires 'Plack::Util';
 
 on build => sub {
     requires 'HTTP::Request::Common';

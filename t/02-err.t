@@ -15,15 +15,15 @@ BEGIN {
 }
 
 my $app_empty = sub {
-	return undef;
+	return [200, [], undef];
 };
 
 my $app_empty1 = sub {
-	return '';
+	return [200, [], ''];
 };
 
 my $app_empty2 = sub {
-	return 'test';
+	return [200, [], 'test'];
 };
 
 my $app = builder {

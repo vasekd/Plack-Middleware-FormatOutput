@@ -49,6 +49,7 @@
             "HTTP::Exception" : "0",
             "JSON::XS" : "0",
             "Plack::Middleware" : "0",
+            "Plack::Util" : "0",
             "YAML::Syck" : "0",
             "perl" : "5.006"
          }

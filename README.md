@@ -8,7 +8,7 @@ Plack::Middleware::FormatOutput - Format output struct by Accept header.
 
         builder {
                 enable 'FormatOutput';
-                mount "/api" => sub { return {'link' => 'content'} };
+                mount "/api" => sub { return [200, undef, {'link' => 'content'}] };
         };
 
 # DESCRIPTION
@@ -25,7 +25,7 @@ You can get json when define:
 
 For complete RestAPI in Perl use: 
 
-- Plack::Middleware::RestAPI
+- Plack::App::REST
 - Plack::Middleware::ParseContent
 
 # CONSTANTS
@@ -35,7 +35,7 @@ For complete RestAPI in Perl use:
 - application/json
 - text/yaml
 - text/plain
-- text/html - it uses Rest::HtmlVis as default formater if installed
+- text/html - it uses Rest::HtmlVis as default formatter if installed
 
 # PARAMETERS
 
@@ -52,7 +52,7 @@ For example:
                 enable 'FormatOutput', mime_type => {
                         'text/html' => sub{ My::HTML::Parse(@_) }
                 };
-                mount "/api" => sub { return {'link' => 'content'} };
+                mount "/api" => sub { return [200, undef, {'link' => 'content'}] };
         };
 
 ## htmlvis (if Rest::HtmlVis is installed)
@@ -67,7 +67,7 @@ For example:
                 enable 'FormatOutput', htmlvis => {
                         links => 'My::Links'
                 };
-                mount "/api" => sub { return {'links' => 'content'} };
+                mount "/api" => sub { return [200, undef, {'links' => 'content'}] };
         };
 
 # TUTORIAL

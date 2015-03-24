@@ -12,7 +12,7 @@ use HTTP::Exception '4XX';
 use JSON::XS;
 use YAML::Syck;
 
-our $VERSION = '0.03'; # is set automagically with Milla
+our $VERSION = '0.04'; # is set automagically with Milla
 
 ### Set Rest::HtmlVis
 my $htmlvis = undef;

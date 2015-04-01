@@ -14,9 +14,6 @@ use YAML::Syck;
 
 our $VERSION = '0.04'; # is set automagically with Milla
 
-### Set Rest::HtmlVis
-my $htmlvis = undef;
-
 ### Try load library
 sub _try_load {
 	my $mod = shift;
@@ -35,29 +32,41 @@ my $MIME_TYPES = {
 		Dump($_[0]) 
 	},
 	'text/html'   => sub {
-		if ($htmlvis){
-			my $ret = $htmlvis->html(@_); #struct, env
+		my ($data, $self, $env) = @_;
+		if ($self->htmlvis){
+			my $ret = $self->htmlvis->html($data, $env); #struct, env
 			return $ret if $ret;
 		}
-		return JSON::XS->new->utf8->allow_nonref->encode($_[0]); # Just show content
+		return JSON::XS->new->utf8->allow_nonref->encode($data); # Just show content
 	}
 };
 
 sub prepare_app {
 	my $self = shift;
 
-	### Add new mime types
+	### Check mime types
 	foreach my $par (keys %{$self->{mime_type}}){
-		next unless ref $self->{mime_type}{$par} eq 'CODE';
-		$MIME_TYPES->{$par} = $self->{mime_type}{$par};
+		delete $self->{mime_type}{$par} if ref $self->{mime_type}{$par} ne 'CODE';
+	}
+
+	### Add default MimeTypes
+	foreach my $par (keys %{$MIME_TYPES}){
+		$self->{mime_type}{$par} = $MIME_TYPES->{$par} unless exists $self->{mime_type}{$par};
 	}
 
 	### Add htmlvis
 	if (_try_load('Rest::HtmlVis')){
 		my $params = $self->{htmlvis} if exists $self->{htmlvis};
-		$htmlvis = Rest::HtmlVis->new($params);
+		$self->{htmlvis} = Rest::HtmlVis->new($params);
 	}
+}
 
+sub mime_type {
+	return $_[0]->{mime_type};
+}
+
+sub htmlvis {
+	return $_[0]->{htmlvis};
 }
 
 sub call {
@@ -67,7 +76,7 @@ sub call {
 	my $res = $self->app->($env);
 
 	### Get accept from request header 
-	my $accept = _getAccept($env);
+	my $accept = _getAccept($self, $env);
 	return $res unless $accept;
 
 	### Return handler that manage response
@@ -83,7 +92,7 @@ sub call {
 			}
 
 			### Convert data
-			$res->[2] = [$MIME_TYPES->{$accept}->($res->[2], $env)];
+			$res->[2] = [$self->mime_type->{$accept}->($res->[2], $self, $env)];
 		}elsif(! defined $res->[2]){
 			$res->[2] = []; # backward compatibility
 		}
@@ -92,13 +101,13 @@ sub call {
 }
 
 sub _getAccept {
-	my ($env) = @_;
+	my ($self, $env) = @_;
 
 	# Get accept from url
 	my $accept;
 	# We parse this with reqular because we need this as quick as possible
 	if ($env->{QUERY_STRING} =~/format=([\w\/\+]*)/){
-		if (exists $MIME_TYPES->{$1}){
+		if (exists $self->mime_type->{$1}){
 			$accept = $1;
 		}
 	};
@@ -107,10 +116,10 @@ sub _getAccept {
 	if (!$accept && $env->{HTTP_ACCEPT}){
 		foreach (split(/,/, $env->{HTTP_ACCEPT})){
 			if ($_ eq '*/*'){
-				$accept = exists $MIME_TYPES->{'text/html'} ? 'text/html' : undef;
+				$accept = exists $self->mime_type->{'text/html'} ? 'text/html' : undef;
 				last;
 			}
-			next unless exists $MIME_TYPES->{$_};
+			next unless exists $self->mime_type->{$_};
 			$accept = $_;
 			last;
 		}

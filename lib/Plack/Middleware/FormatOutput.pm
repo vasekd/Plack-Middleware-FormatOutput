@@ -12,7 +12,7 @@ use HTTP::Exception '4XX';
 use JSON::XS;
 use YAML::Syck;
 
-our $VERSION = '0.04'; # is set automagically with Milla
+our $VERSION = '0.05'; # is set automagically with Milla
 
 ### Try load library
 sub _try_load {

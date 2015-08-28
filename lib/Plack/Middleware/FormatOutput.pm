@@ -125,9 +125,7 @@ sub _getAccept {
 		}
 	}
 
-	HTTP::Exception::406->throw() unless defined $accept;
-
-	return $accept;
+	return ($accept||'application/json');
 }
 
 1;

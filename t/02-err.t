@@ -61,7 +61,7 @@ test_psgi app => $app, client => sub {
 	$req = HTTP::Request->new('GET', "http://localhost/2", $h);
 
 	$res = $cb->($req);
-	is $res->content, 'Not Acceptable';
+	is $res->content, '"test"';
 };
 
 done_testing;

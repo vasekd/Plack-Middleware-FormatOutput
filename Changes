@@ -2,6 +2,9 @@ Revision history for Plack-Middleware-FormatOutput
 
 {{$NEXT}}
 
+0.06  2015-08-28 16:32:58 CEST
+	Set Accept as optional
+
 0.05  2015-04-02 10:18:24 CEST
 	Fixed global mime_type variable
 

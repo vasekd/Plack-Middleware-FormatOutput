@@ -11,7 +11,7 @@ use HTTP::Exception '4XX';
 
 use JSON::XS;
 use YAML::Syck;
-
+use URL::Encode qw ( url_decode ); 
 our $VERSION = '0.06'; # is set automagically with Milla
 
 ### Try load library
@@ -106,7 +106,8 @@ sub _getAccept {
 	# Get accept from url
 	my $accept;
 	# We parse this with reqular because we need this as quick as possible
-	if ($env->{QUERY_STRING} =~/format=([\w\/\+]*)/){
+	my $query_string  = url_decode($env->{QUERY_STRING});
+	if ( $query_string=~/format=([\w\/\+]*)/){
 		if (exists $self->mime_type->{$1}){
 			$accept = $1;
 		}

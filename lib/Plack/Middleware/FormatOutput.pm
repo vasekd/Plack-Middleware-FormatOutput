@@ -11,7 +11,8 @@ use HTTP::Exception '4XX';
 
 use JSON::XS;
 use YAML::Syck;
-use URL::Encode qw ( url_decode ); 
+use URL::Encode qw ( url_decode );
+use Encode; 
 our $VERSION = '0.06'; # is set automagically with Milla
 
 ### Try load library
@@ -35,7 +36,7 @@ my $MIME_TYPES = {
 		my ($data, $self, $env) = @_;
 		if ($self->htmlvis){
 			my $ret = $self->htmlvis->html($data, $env); #struct, env
-			return $ret if $ret;
+			return Encode::encode_utf8($ret) if $ret;
 		}
 		return JSON::XS->new->utf8->allow_nonref->encode($data); # Just show content
 	}

@@ -13,7 +13,7 @@ use JSON::XS;
 use YAML::Syck;
 use URL::Encode qw ( url_decode );
 use Encode; 
-our $VERSION = '0.06'; # is set automagically with Milla
+our $VERSION = '0.07'; # is set automagically with Milla
 
 ### Try load library
 sub _try_load {

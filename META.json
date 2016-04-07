@@ -67,6 +67,9 @@
          "web" : "https://github.com/vasekd/Plack-Middleware-FormatOutput"
       }
    },
-   "version" : "0.06"
+   "version" : "0.07",
+   "x_contributors" : [
+      "Zbynek Mares <zbynek.mares@gmail.com>"
+   ]
 }
 

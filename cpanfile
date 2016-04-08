@@ -4,6 +4,7 @@ requires 'Plack::Middleware';
 requires 'YAML::Syck';
 requires 'perl', '5.006';
 requires 'Plack::Util';
+requires 'URL::Encode';
 
 on build => sub {
     requires 'HTTP::Request::Common';

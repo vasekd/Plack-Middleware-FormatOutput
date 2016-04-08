@@ -2,6 +2,9 @@ Revision history for Plack-Middleware-FormatOutput
 
 {{$NEXT}}
 
+0.08  2016-04-08 10:03:49 CEST
+	Fixed prerequisite
+
 0.07  2016-04-08 00:18:12 CEST
 	Set utf8 encoding for html output
 	Decode query params

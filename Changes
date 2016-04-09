@@ -2,6 +2,9 @@ Revision history for Plack-Middleware-FormatOutput
 
 {{$NEXT}}
 
+0.09  2016-04-09 17:52:33 CEST
+	Added utf8 encoding
+
 0.08  2016-04-08 10:03:49 CEST
 	Fixed prerequisite
 

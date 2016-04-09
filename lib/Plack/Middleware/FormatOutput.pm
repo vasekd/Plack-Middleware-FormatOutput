@@ -15,6 +15,8 @@ use URL::Encode qw ( url_decode );
 use Encode; 
 our $VERSION = '0.08'; # is set automagically with Milla
 
+$YAML::Syck::ImplicitUnicode = 1;
+
 ### Try load library
 sub _try_load {
 	my $mod = shift;

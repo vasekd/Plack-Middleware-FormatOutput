@@ -35,9 +35,9 @@ my $MIME_TYPES = {
 		Dump($_[0]) 
 	},
 	'text/html'   => sub {
-		my ($data, $self, $env) = @_;
+		my ($data, $self, $env, $header) = @_;
 		if ($self->htmlvis){
-			my $ret = $self->htmlvis->html($data, $env); #struct, env
+			my $ret = $self->htmlvis->html($data, $env, $header); #struct, env
 			return Encode::encode_utf8($ret) if $ret;
 		}
 		return JSON::XS->new->utf8->allow_nonref->encode($data); # Just show content

@@ -2,6 +2,10 @@ Revision history for Plack-Middleware-FormatOutput
 
 {{$NEXT}}
 
+0.10  2016-04-11 15:31:02 CEST
+	Added support for websocket
+	Added support for footer
+
 0.09  2016-04-09 17:52:33 CEST
 	Added utf8 encoding
 

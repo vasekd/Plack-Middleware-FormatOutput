@@ -13,7 +13,7 @@ use JSON::XS;
 use YAML::Syck;
 use URI::Escape::XS qw/decodeURIComponent/;
 use Encode; 
-our $VERSION = '0.09'; # is set automagically with Milla 
+our $VERSION = '0.10'; # is set automagically with Milla 
 
 $YAML::Syck::ImplicitUnicode = 1;
 

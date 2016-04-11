@@ -50,7 +50,7 @@
             "JSON::XS" : "0",
             "Plack::Middleware" : "0",
             "Plack::Util" : "0",
-            "URL::Encode" : "0",
+            "URI::Escape::XS" : "0",
             "YAML::Syck" : "0",
             "perl" : "5.006"
          }
@@ -68,7 +68,7 @@
          "web" : "https://github.com/vasekd/Plack-Middleware-FormatOutput"
       }
    },
-   "version" : "0.09",
+   "version" : "0.10",
    "x_contributors" : [
       "Zbynek Mares <zbynek.mares@gmail.com>"
    ]

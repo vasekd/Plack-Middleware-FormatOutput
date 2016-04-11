@@ -11,9 +11,9 @@ use HTTP::Exception '4XX';
 
 use JSON::XS;
 use YAML::Syck;
-use URL::Encode qw ( url_decode );
+use URI::Escape::XS qw/decodeURIComponent/;
 use Encode; 
-our $VERSION = '0.09'; # is set automagically with Milla
+our $VERSION = '0.09'; # is set automagically with Milla 
 
 $YAML::Syck::ImplicitUnicode = 1;
 
@@ -87,6 +87,11 @@ sub call {
 		my $res = shift;
 		if ( !Plack::Util::status_with_no_entity_body( $res->[0] ) && defined $res->[2] ){
 
+			### File handler streaming body
+			if ( Plack::Util::is_real_fh($res->[2]) ) {
+				return 
+			}
+
 			### Set header
 			if ($res->[1] && @{$res->[1]}){
 				Plack::Util::header_set($res->[1], 'Content-Type', $accept);
@@ -95,11 +100,11 @@ sub call {
 			}
 
 			### Convert data
-			$res->[2] = [$self->mime_type->{$accept}->($res->[2], $self, $env)];
+			$res->[2] = [$self->mime_type->{$accept}->($res->[2], $self, $env, $res->[1])];
 		}elsif(! defined $res->[2]){
 			$res->[2] = []; # backward compatibility
 		}
-		return
+		return $res;
 	});
 }
 
@@ -109,7 +114,7 @@ sub _getAccept {
 	# Get accept from url
 	my $accept;
 	# We parse this with reqular because we need this as quick as possible
-	my $query_string  = url_decode($env->{QUERY_STRING});
+	my $query_string  = decodeURIComponent($env->{QUERY_STRING});
 	if ( $query_string=~/format=([\w\/\+]*)/){
 		if (exists $self->mime_type->{$1}){
 			$accept = $1;

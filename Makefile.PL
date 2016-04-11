@@ -26,7 +26,7 @@ WriteMakefile(
         'YAML::Syck' => 0,
         'Plack::Middleware' => 0,
         'HTTP::Exception' => 0,
-        'URL::Encode' => 0
+        'URI::Escape::XS' => 0
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES => 'Plack-Middleware-FormatOutput-*' },
